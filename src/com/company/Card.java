@@ -1,54 +1,37 @@
 package com.company;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Random;
 
-public class Card {
-    public static final String[] ranks = {
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "Jack",
-            "Queen",
-            "King",
-            "Ace"
-    };
+public class Card implements Comparable{
+    private final String rank;
+    private final String suit;
+    private final String color;
 
-    public static final Map<String, Integer> values;
+    private Random random = new Random();
+    public Card() {
+        int randomRankIndex = random.nextInt(9);
+        rank = DescriptionCards.ranks[randomRankIndex];
 
-    static {
-        Map<String, Integer> valuesMap = new HashMap<String, Integer>();
-        valuesMap.put("6", 6);
-        valuesMap.put("7", 7);
-        valuesMap.put("8", 8);
-        valuesMap.put("9", 9);
-        valuesMap.put("10", 10);
-        valuesMap.put("Jack", 11);
-        valuesMap.put("Queen", 12);
-        valuesMap.put("King", 13);
-        valuesMap.put("Ace", 14);
-        values = Collections.unmodifiableMap(valuesMap);
+        int randomSuitIndex = random.nextInt(4);
+        suit = DescriptionCards.suits[randomRankIndex];
+
+        color = DescriptionCards.colors.get(suit);
     }
 
-    public static final String[] suits = {
-            "Hearts",
-            "Diamonds",
-            "Clubs",
-            "Spades"
-    };
 
-    public static final Map<String, String> colors;
+    @Override
+    public int compareTo(Object o) {
+        return 0;
+    }
 
-    static {
-        Map<String, String> colorsMap = new HashMap<String, String>();
-        colorsMap.put("Hearts", "Red");
-        colorsMap.put("Diamonds", "Red");
-        colorsMap.put("Clubs", "Black");
-        colorsMap.put("Spades", "Black");
-        colors = Collections.unmodifiableMap(colorsMap);
+    Card(String r, String s){
+        if (Arrays.asList(DescriptionCards.ranks).contains(r) && Arrays.asList(DescriptionCards.suits).contains(s)) {
+            rank = r;
+            suit = s;
+            color = DescriptionCards.colors.get(suit);
+        } else {
+            throw new IllegalArgumentException("Wrong with rank or suit");
+        }
     }
 }
