@@ -22,7 +22,12 @@ public class Card implements Comparable{
 
     @Override
     public int compareTo(Object o) {
-        return 0;
+        Card secondCard = (Card) o;
+
+        int valueFirstCard = DescriptionCards.values.get(rank);
+        int valueSecondCard = DescriptionCards.values.get(secondCard.rank);
+
+        return valueFirstCard - valueSecondCard;
     }
 
     Card(String r, String s){
