@@ -30,6 +30,15 @@ public class Card implements Comparable{
         return valueFirstCard - valueSecondCard;
     }
 
+    public boolean sameSuit(Object o) {
+        Card secondCard = (Card) o;
+
+        String firstCardSuit = this.suit;
+        String secondCardSuit = secondCard.suit;
+
+        return firstCardSuit.equals(secondCardSuit);
+    }
+
     Card(String r, String s){
         if (Arrays.asList(DescriptionCards.ranks).contains(r) && Arrays.asList(DescriptionCards.suits).contains(s)) {
             rank = r;
