@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class Hand {
+public class ServiceHand {
 
     private ArrayList<Card> cards;
-    private Deck deck = new Deck();
+    private Stack<Card> deck;
 
-    Hand() {
+    ServiceHand() {
 
     }
 
     public List<Card> getStartsCard() {
-        List<Card> hang = new ArrayList();
+        ArrayList hang = new ArrayList(52);
         if (deck.size() != 0) {
             for (int count = 0; count < 6; count++) {
                 hang.add(deck.pop());
