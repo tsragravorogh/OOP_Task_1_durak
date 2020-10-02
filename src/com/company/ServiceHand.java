@@ -30,5 +30,9 @@ public class ServiceHand {
         return cards;
     }
 
+    public List<Card> sortInCommand(List<Card> cards) {
+
+    }
+
 
 }
