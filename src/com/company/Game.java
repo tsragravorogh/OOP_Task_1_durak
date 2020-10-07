@@ -1,7 +1,6 @@
 package com.company;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
 //    deck, map(pl, cards), koz, ections(qu)(who, who, atack, ref) -> result
@@ -9,11 +8,34 @@ public class Game {
 //
 //    } - gameservice
 
-    private Suit trump;
-    private List<Player> players;
-    private List<Card> cars;
-    private Map<Player, List<Card>> playerToCardsMap;
+    private Suit trump; // козырь
+    private CyclicLinkedList<Player> players; // игроки в игре
+    private List<Card> cards; // карты в
+    private Map<Player, List<Card>> playerToCardsMap; // игроки
     private List<Round> stepList;
+    private Stack<Card> playDeck; // стартовая колода
 
 
+    public CyclicLinkedList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setColoda(Stack<Card> cards) {
+        playDeck.addAll(cards);
+    }
+    public Stack<Card> getColoda() {
+        return playDeck;
+    }
+
+    public Stack<Card> getPlayDeck() {
+        return playDeck;
+    }
+
+    public Map<Player, List<Card>> getPlayerToCardsMap() {
+        return playerToCardsMap;
+    }
+
+    public void setPlayerToCardsMap(Map<Player, List<Card>> playerToCardsMap) {
+        this.playerToCardsMap = playerToCardsMap;
+    }
 }
