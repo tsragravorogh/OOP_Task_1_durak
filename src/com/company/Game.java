@@ -20,9 +20,14 @@ public class Game {
         return players;
     }
 
+    public void setPlayers(CyclicLinkedList<Player> players) {
+        this.players = players;
+    }
+
     public void setColoda(Stack<Card> cards) {
         playDeck.addAll(cards);
     }
+
     public Stack<Card> getColoda() {
         return playDeck;
     }

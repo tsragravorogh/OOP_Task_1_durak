@@ -3,7 +3,7 @@ package com.company;
 public class Player {
     Player name;
 
-    Player() {
-
+    public void setName(Player name) {
+        this.name = name;
     }
 }

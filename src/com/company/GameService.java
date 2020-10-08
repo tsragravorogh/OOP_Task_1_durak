@@ -22,8 +22,6 @@ public class GameService {
         }
     }
 
-    private getPlayer
-
     private void getSourcePlayer() {
         g.getPlayer();
 
@@ -49,11 +47,13 @@ public class GameService {
     }
 
     public void initGameWithPlayers(Game g, int playersCount) {
+        CyclicLinkedList<Player> players = new CyclicLinkedList<>();
         if(playersCount > 1 && playersCount <= 7) {
             for(int i = 0; i < playersCount; i++) {
-                g.getPlayers().addLast(new Player());
+                players.addLast(new Player());
             }
         }
+        g.setPlayers(players);
     }
 
     public void initGameWithCards(Game g) {
