@@ -1,10 +1,12 @@
 package com.company;
 
-public class CyclicLinkedList<T> {
+import java.util.LinkedList;
 
-    private class ListItem {
-        public T value;
-        public ListItem next;
+public class CyclicLinkedList<T> extends LinkedList<T> {
+
+    public class ListItem {
+        private T value;
+        private ListItem next;
 
         public ListItem(T value, ListItem next) {
             this.value = value;
@@ -37,10 +39,7 @@ public class CyclicLinkedList<T> {
         size++;
     }
 
-    public T get(int index) throws Exception {
-        if (index < 0 || index > size - 1) {
-            throw new Exception("Incorrect index");
-        }
+    public T get(int index) {
         ListItem curr = head;
         while (index != 0) {
             index--;

@@ -10,7 +10,7 @@ public class Game {
 
     private Suit trump; // козырь
     private CyclicLinkedList<Player> players; // игроки в игре
-    private List<Card> cards; // карты в
+    private List<Card> cards; // карты в game
     private Map<Player, List<Card>> playerToCardsMap; // игроки
     private List<Round> stepList;
     private Stack<Card> playDeck; // стартовая колода
@@ -22,6 +22,14 @@ public class Game {
 
     public void setPlayers(CyclicLinkedList<Player> players) {
         this.players = players;
+    }
+
+    public void putCards(Card card) {
+        cards.add(card);
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 
     public void setColoda(Stack<Card> cards) {
