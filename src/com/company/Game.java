@@ -52,6 +52,10 @@ public class Game {
         return playDeck;
     }
 
+    public void removePlayerMap(Player playerToRemove) {
+        playerToCardsMap.remove(playerToRemove);
+    }
+
     public Map<Player, List<Card>> getPlayerToCardsMap() {
         return playerToCardsMap;
     }
