@@ -36,6 +36,10 @@ public class Game {
         return cards;
     }
 
+    public void clearCardsOnDeck() {
+        cards.clear();
+    }
+
     public void setColoda(Stack<Card> cards) {
         playDeck.addAll(cards);
     }
