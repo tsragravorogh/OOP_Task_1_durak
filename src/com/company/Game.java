@@ -24,6 +24,10 @@ public class Game {
         this.players = players;
     }
 
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
+    }
+
     public void putCards(Card card) {
         cards.add(card);
     }
