@@ -3,10 +3,6 @@ package com.company;
 import java.util.*;
 
 public class Game {
-//    deck, map(pl, cards), koz, ections(qu)(who, who, atack, ref) -> result
-//    play() {
-//
-//    } - gameservice
 
     private Suit trump; // козырь
     private CyclicLinkedList<Player> players; // игроки в игре

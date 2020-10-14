@@ -2,7 +2,7 @@ package com.company;
 
 import java.util.LinkedList;
 
-public class CyclicLinkedList<T> extends LinkedList<T> {
+public class CyclicLinkedList<T>{
 
     public class ListItem {
         private T value;
@@ -39,13 +39,17 @@ public class CyclicLinkedList<T> extends LinkedList<T> {
         size++;
     }
 
-    public T get(int index) {
+    public T getNext(ListItem current) {
+        return current.next.value;
+    }
+
+    public ListItem get(int index) {
         ListItem curr = head;
         while (index != 0) {
             index--;
             curr = curr.next;
         }
-        return curr.value;
+        return curr;
     }
 
     public int size() {

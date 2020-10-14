@@ -1,9 +1,21 @@
 package com.company;
 
 public class Player {
-    Player name;
+    String name;
 
-    public void setName(Player name) {
+    public Player(String name) {
         this.name = name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Player - ");
+        sb.append(name);
+        return sb.toString();
+    }
 }
+
