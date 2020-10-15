@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Game {
 
-    private Suit trump; // козырь
+    private Card trump; // козырь
     private CyclicLinkedList<Player> players; // игроки в игре
     private List<Card> cards; // карты в game
     private Map<Player, List<Card>> playerToCardsMap; // игроки
@@ -12,11 +12,11 @@ public class Game {
     private Stack<Card> playDeck; // стартовая колода
 
 
-    public CyclicLinkedList<Player> getPlayers() {
+    public CyclicLinkedList<Player> getPlayers() { //
         return players;
     }
 
-    public void setPlayers(CyclicLinkedList<Player> players) {
+    public void setPlayers(CyclicLinkedList<Player> players) { //
         this.players = players;
     }
 
@@ -58,5 +58,13 @@ public class Game {
 
     public void setPlayerToCardsMap(Map<Player, List<Card>> playerToCardsMap) {
         this.playerToCardsMap = playerToCardsMap;
+    }
+
+    public Card getTrump() {
+        return trump;
+    }
+
+    public void setTrump(Card trump) {
+        this.trump = trump;
     }
 }

@@ -1,14 +1,12 @@
 package com.company;
 
-import java.util.LinkedList;
-
-public class CyclicLinkedList<T>{
+public class CyclicLinkedList<Player>{
 
     public class ListItem {
-        private T value;
+        private Player value;
         private ListItem next;
 
-        public ListItem(T value, ListItem next) {
+        public ListItem(Player value, ListItem next) {
             this.value = value;
             this.next = next;
         }
@@ -19,7 +17,7 @@ public class CyclicLinkedList<T>{
 
     protected int size = 0;
 
-    public void addFirst(T value) {
+    public void addFirst(Player value) {
         head = new ListItem(value, head);
         if (tail == null) {
             tail = head;
@@ -27,7 +25,7 @@ public class CyclicLinkedList<T>{
         size++;
     }
 
-    public void addLast(T value) {
+    public void addLast(Player value) {
         ListItem temp = new ListItem(value, null);
         if (tail == null) {
             head = tail = temp;
@@ -39,17 +37,29 @@ public class CyclicLinkedList<T>{
         size++;
     }
 
-    public T getNext(ListItem current) {
-        return current.next.value;
+    public Player getNext(Player player) {
+        boolean s = true;
+        ListItem curr = head;
+        while (true) {
+            if(player.equals(head.value)) {
+                return head.next.value;
+            }else {
+                if(curr.value.equals(player)) {
+                    return curr.next.value;
+                }else{
+                    curr = curr.next;
+                }
+            }
+        }
     }
 
-    public ListItem get(int index) {
+    public Player get(int index) {
         ListItem curr = head;
         while (index != 0) {
             index--;
             curr = curr.next;
         }
-        return curr;
+        return curr.value;
     }
 
     public int size() {
