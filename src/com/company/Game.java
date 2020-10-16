@@ -6,7 +6,7 @@ public class Game {
 
     private Card trump; // козырь
     private CyclicLinkedList<Player> players; // игроки в игре
-    private List<Card> cards; // карты в game
+    private List<Card> desk; // карты в game
     private Map<Player, List<Card>> playerToCardsMap; // игроки
     private List<Round> stepList;
     private Stack<Card> playDeck; // стартовая колода
@@ -21,23 +21,23 @@ public class Game {
     }
 
     public void setCards(List<Card> cards) {
-        this.cards = cards;
+        this.desk = cards;
     }
 
     public void putCards(Card card) {
-        cards.add(card);
+        desk.add(card);
     }
 
     public List<Card> getCards() {
-        return cards;
+        return desk;
     }
 
     public void clearCardsOnDeck() {
-        cards.clear();
+        desk.clear();
     }
 
     public void setColoda(Stack<Card> cards) {
-        playDeck.addAll(cards);
+        this.playDeck = cards;
     }
 
     public Stack<Card> getColoda() {

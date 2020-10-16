@@ -17,4 +17,14 @@ public class Card{
     public Suit getSuit() {
         return suit;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(face.toString());
+        sb.append(" ");
+        sb.append(suit.toString());
+        return sb.toString();
+    }
 }

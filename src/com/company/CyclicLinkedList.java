@@ -53,6 +53,75 @@ public class CyclicLinkedList<Player>{
         }
     }
 
+    public void removePlayer(Player player) {
+        int count = 0;
+        ListItem curr = head;
+        while (curr.next != head || curr.value.equals(player)) {
+            count++;
+        }
+        remove(count);
+    }
+
+    public boolean remove(int index) {
+        if (index < 0 || index > size - 1) {
+            throw new IllegalArgumentException();
+        }
+        if (index == 0) {
+            head = head.next;
+        }
+        if(index == size -1) {
+            ListItem node = findNodeBeforeByIndex(index);
+            node.next = head;
+        } else {
+            ListItem curr = findNodeBeforeByIndex(index);
+            ListItem tmp = findByIndex(index);
+            curr.next = tmp.next;
+        }
+        size--;
+        return false;
+    }
+
+    private ListItem findNodeBeforeByIndex(int index) {
+        if (index <= 0 || index > size - 1) {
+            return null;
+        }
+
+        int count = 0;
+        ListItem curr = head;
+        while (curr.next != null) {
+            if (count == index - 1) {
+                return curr;
+            }
+            count++;
+            curr = curr.next;
+        }
+        return null;
+    }
+
+    private ListItem findByIndex(int index) {
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+        int tmpIndex = 0;
+        if (head == null) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (index == 0) {
+            return head;
+        }
+
+        ListItem node = head;
+        while (node.next != null) {
+            node = node.next;
+            tmpIndex++;
+            if (tmpIndex == index) {
+                return node;
+            }
+        }
+        throw new IndexOutOfBoundsException();
+    }
+
     public Player get(int index) {
         ListItem curr = head;
         while (index != 0) {
