@@ -6,10 +6,11 @@ public class Game {
 
     private Card trump; // козырь
     private CyclicLinkedList<Player> players; // игроки в игре
-    private List<Card> desk; // карты в game
+    private List<Card> desk = new ArrayList<>(); // карты в game
     private Map<Player, List<Card>> playerToCardsMap; // игроки
-    private List<Round> stepList;
     private Stack<Card> playDeck; // стартовая колода
+    private List<List<Fight>> rounds = new ArrayList<>();
+
 
 
     public CyclicLinkedList<Player> getPlayers() { //
@@ -24,7 +25,11 @@ public class Game {
         this.desk = cards;
     }
 
-    public void putCards(Card card) {
+    public void putCards(List<Card> cards) {
+        desk.addAll(cards);
+    }
+
+    public void putCard(Card card) {
         desk.add(card);
     }
 
@@ -66,5 +71,13 @@ public class Game {
 
     public void setTrump(Card trump) {
         this.trump = trump;
+    }
+
+    public List<List<Fight>> getRounds() {
+        return rounds;
+    }
+
+    public void setRound(List<Fight> round) {
+        rounds.add(round);
     }
 }

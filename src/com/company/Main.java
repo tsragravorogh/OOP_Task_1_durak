@@ -10,16 +10,17 @@ public class Main {
         Game g = new Game();
 
         GameService svc = new GameService();
+        svc.play(g, 6);
 
-        svc.initGameWithCards(g);
-        svc.initGameWithPlayers(g, 6);
-        svc.initGameWithPlayersNCards(g);
-        CyclicLinkedList<Player> list = g.getPlayers();
+//        svc.initGameWithCards(g);
+//        svc.initGameWithPlayers(g, 6);
+//        svc.initGameWithPlayersNCards(g);
+//        CyclicLinkedList<Player> list = g.getPlayers();
 
-        List<Card> players = g.getPlayerToCardsMap().get(list.get(1));
-        System.out.println(players);
-        players = svc.sort(players);
-        System.out.println(players);
+//        List<Card> players = g.getPlayerToCardsMap().get(list.get(1));
+//        System.out.println(players);
+//        players = svc.sort(players);
+//        System.out.println(players);
 //        svc.play(g, 6);
 //        CyclicLinkedList<Player> list = new CyclicLinkedList();
 //        list.addLast(new Player("1"));

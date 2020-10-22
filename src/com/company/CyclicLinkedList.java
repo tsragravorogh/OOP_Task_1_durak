@@ -134,4 +134,14 @@ public class CyclicLinkedList<Player>{
     public int size() {
         return size;
     }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(head.value).append(" ");
+        ListItem item = head;
+        for(int i = 1; i < size(); i++){
+            item = item.next;
+            sb.append(item.value);
+        }
+        return sb.toString();
+    }
 }

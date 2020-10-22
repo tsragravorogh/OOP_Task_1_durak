@@ -1,6 +1,5 @@
 package com.company;
 
-
 public class Card{
     private Suit suit;
     private Face face;
