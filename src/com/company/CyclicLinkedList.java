@@ -56,8 +56,9 @@ public class CyclicLinkedList<Player>{
     public void removePlayer(Player player) {
         int count = 0;
         ListItem curr = head;
-        while (curr.next != head || curr.value.equals(player)) {
+        while (!curr.value.equals(player)) {
             count++;
+            curr = curr.next;
         }
         remove(count);
     }
