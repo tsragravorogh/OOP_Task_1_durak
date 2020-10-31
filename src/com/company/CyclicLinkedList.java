@@ -37,6 +37,14 @@ public class CyclicLinkedList<Player>{
         size++;
     }
 
+    public boolean isExist(Player value) {
+        ListItem curr = head;
+        for(ListItem item = curr; item == tail; item = curr.next) {
+            if(item.value == value) return true;
+        }
+        return false;
+    }
+
     public Player getNext(Player player) {
         boolean s = true;
         ListItem curr = head;
@@ -69,6 +77,7 @@ public class CyclicLinkedList<Player>{
         }
         if (index == 0) {
             head = head.next;
+            tail.next = head;
         }
         if(index == size -1) {
             ListItem node = findNodeBeforeByIndex(index);
@@ -82,9 +91,37 @@ public class CyclicLinkedList<Player>{
         return false;
     }
 
-    private ListItem findNodeBeforeByIndex(int index) {
-        if (index <= 0 || index > size - 1) {
-            return null;
+    public int indexByPlayer(Player player) {
+        ListItem curr = head; int count = 0;
+        while (curr.value != player) {
+            curr = curr.next;
+            count++;
+        }
+        return count;
+    }
+
+    public Player findPlayerBeforeByIndex(int index) {
+        if(index == 0) {
+            return tail.value;
+        }
+
+        int count = 0;
+        ListItem curr = head;
+        while (curr.next != null) {
+            if (count == index - 1) {
+                return curr.value;
+            }
+            
+            count++;
+            curr = curr.next;
+        }
+        return null;
+    }
+
+    public ListItem findNodeBeforeByIndex(int index) {
+
+        if(index == 0) {
+            return tail;
         }
 
         int count = 0;

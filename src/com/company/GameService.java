@@ -3,144 +3,327 @@ package com.company;
 import java.util.*;
 
 public class GameService {
-    private List<Player> players = new ArrayList<>();
-    //private Iterator it = (Iterator) new CyclicLinkedList<Player>();
-    private Integer countSource = -1;
-    private Integer countTarget = 0;
 
     public void play(Game g, int playersCount) throws Exception {
-        initGameWithPlayers(g, playersCount);
+        initGameWithPlayers(g, playersCount); // players
         initGameWithCards(g);
         initGameWithPlayersNCards(g);
-        //deal cards
-        while (!isDeckEmpty(g) || isGameAlive(g)) {
 
-            getSourcePlayer(g); // ходящий
-            getTargetPlayer(g); // отбивающий
+        Player source = null;
+        Player target = null;
+        boolean isFirstRound = true;
+        boolean isPickedUp = false;
+
+        while (isGameAlive(g)) {
+            if (isFirstRound) {
+                source = getSourcePlayerFirstTime(g);
+                target = getTargetPlayer(g, source);
+                isFirstRound = false;
+            } else {
+                source = getSourcePlayer(g, isPickedUp, source); //определили ходящего
+                System.out.println(source + " атакует");
+                target = getTargetPlayer(g, source); //определили отбивающего
+                System.out.println(target + " защищается");
+            }
+            //System.out.println(source + ", " + target);
             Round r = new Round();
-//            r.setSource();
-//            r.setTarget();
-
-            //Fight f = buildFight();
-
+            r.setSource(source);
+            r.setTarget(target);
+            source = sourcePlayer(g, source, target);
+            if(source == null) {
+                System.out.println("Проиграл " + target);
+                break;
+            }
+            System.out.println("Игрок которого вернул атакующий после атаки " + source);
+            isPickedUp = targetPlayerNew(g, target);
+            if (isPickedUp) {
+                System.out.println("Потянул");
+            } else {
+                System.out.println("Отбился");
+            }
+            if(g.getColoda().size() != 0) getNeedCard(g);
+            System.out.println(g.getPlayers());
+            System.out.println();
         }
+
     }
 
-    private Player getNextSourcePlayer() {
-        if (countSource == players.size() - 1) {
-            countSource = -1;
+    private void getNeedCard(Game g) {
+        Map<Player, List<Card>> playerCards = g.getPlayerToCardsMap();
+
+        Stack<Card> cards = g.getColoda();
+
+        for (Map.Entry<Player, List<Card>> entry : playerCards.entrySet()) {
+
+            List<Card> newCards = new ArrayList<>();
+            int size = entry.getValue().size();
+
+            while (size < 6 && cards.size() != 0) {
+                newCards.add(cards.pop());
+                size++;
+
+            }
+            entry.getValue().addAll(newCards);
+
         }
-        countSource++;
-        return players.get(countSource);
+        g.setColoda(cards);
+        g.setPlayerToCardsMap(playerCards);
     }
 
-    private Player getNextTargetPlayer() {
-        if (countTarget == players.size() - 1) {
-            countTarget = -1;
-        }
-        countTarget++;
-        return players.get(countTarget);
-    }
-
-    private void getSourcePlayer(Game g) {
-        Player sourcePlayer = getNextSourcePlayer();
-        List<Card> sourcePlayerCards = sort(g.getPlayerToCardsMap().get(sourcePlayer)); // переписать сорт
-        g.putCards(sourcePlayerCards.get(0)); // кладу карту на стол
-        sourcePlayerCards.remove(sourcePlayerCards.get(0));
-        putSimilarCards(g); // игроки подкидывают карты
-        if(sourcePlayerCards.size() == 0) {
-            players.remove(sourcePlayer);
-            g.removePlayerMap(sourcePlayer);
-        }
-        // взять игрока из бесконечного цикла ??? +
-        // взять верхнюю карту в отсортированном массиве +
-        // положить ее на стол - в game
-        // пройти по всем картам всех игроков и выложить на стол все карты, какие лежат на столе
-    }
-
-    private void getTargetPlayer(Game g) {
-        Player targetPlayer = getNextTargetPlayer();
-        List<Card> targetPlayerCard = sort(g.getPlayerToCardsMap().get(targetPlayer)); // карты игрока
-        List<Card> cardsToDefine = g.getCards(); // карты, которые нужно побить
-        Iterator<Card> cardIterator = cardsToDefine.iterator();
-        Iterator<Card> targetPlayerCardIterator = targetPlayerCard.iterator();
-
-        while (cardIterator.hasNext()) {
-            Card nextCard = cardIterator.next();
-            while (targetPlayerCardIterator.hasNext()) {
-                Card playerCard = targetPlayerCardIterator.next();
-                if (isBeat(nextCard, playerCard)) {
-                    cardsToDefine.remove(playerCard);  // бьет карту
-                    targetPlayerCard.remove(nextCard); // удаляется(убирается) карта которую побили
-                } else {
-                    targetPlayerCard.add(nextCard);
+    private Player getSourcePlayerFirstTime(Game g) {
+        int maxRang = g.getTrump().getFace().getRank();
+        int minRang = g.getTrump().getFace().getRank();
+        int count = 0;
+        CyclicLinkedList<Player> list = g.getPlayers();
+        if (g.getTrump().getFace().getRank() > 10) {
+            for (int i = 0; i < g.getPlayers().size(); i++) {
+                Player player = list.get(i);
+                for (Card c : g.getPlayerToCardsMap().get(player)) {
+                    if ((c.getSuit() == g.getTrump().getSuit()) && (c.getFace().getRank() > maxRang)) {
+                        maxRang = c.getFace().getRank();
+                        count = i;
+                    }
                 }
             }
-        }
-
-        g.clearCardsOnDeck(); // игрок либо отбивается, либо нет -> карт на столе нет
-
-        // взять следующего игрока из бесконечного цикла
-        // взять карты   со стола, проверить все карты на возможность побить
-        // если можно побить - бить, если нет то тянуть  -> записать результат в какую то сессию
-    }
-
-    private boolean isBeat(Card firstCard, Card secondCard) { // wrong
-        return (firstCard.getSuit().equals(secondCard.getSuit())
-                && Integer.parseInt(firstCard.getFace().getValue()) > Integer.parseInt(secondCard.getFace().getValue()));
-    }
-
-    private void putSimilarCards(Game g) {
-        if(g.getPlayers().size() == 2) {
-            return;
-        }
-
-        // <6, проверить количество карт у отбивающего
-        List<Card> cards = g.getCards();
-        Map<Player, List<Card>> playerToCardsMap = g.getPlayerToCardsMap();
-
-        for (Map.Entry<Player, List<Card>> entry : playerToCardsMap.entrySet()) {
-            for (Card playerCard : entry.getValue()) {
-                for (Card card : cards) {
-                    if (card.getFace() == playerCard.getFace()) {
-                        g.putCards(playerCard); // лучше использовать стек, удобнее удалять
+        } else {
+            for (int i = 0; i < g.getPlayers().size(); i++) {
+                Player player = list.get(i);
+                for (Card c : g.getPlayerToCardsMap().get(player)) {
+                    if ((c.getSuit() == g.getTrump().getSuit()) && (c.getFace().getRank() < minRang)) {
+                        minRang = c.getFace().getRank();
+                        count = i;
                     }
                 }
             }
         }
+        return g.getPlayers().get(count);
     }
 
-    private List<Card> sort(List<Card> cards) {
+    private Player getSourcePlayer(Game g, boolean isPickedUp, Player playerO) {
+        Player player;
+        if (!isPickedUp) {
+            player = g.getPlayers().getNext(playerO);
+        } else {
+            player = g.getPlayers().getNext(g.getPlayers().getNext(playerO));
+        }
+        return player;
+    }
+
+    private Player getTargetPlayer(Game g, Player sourcePlayer) {
+        return g.getPlayers().getNext(sourcePlayer);
+    }
+
+    private Player sourcePlayer(Game g, Player sourcePlayer, Player targetPlayer) {
+        Player beforeSource = g.getPlayers().findPlayerBeforeByIndex(g.getPlayers().indexByPlayer(sourcePlayer));
+        boolean isEnd = g.getPlayers().size == 2;
+        System.out.println("Игорок которого вернет атакующий если удалится " + beforeSource);
+        List<Card> sourcePlayerCards = sortCards(g.getPlayerToCardsMap().get(sourcePlayer));// sort
+        System.out.println("Карты которые есть у атакующего " + sourcePlayerCards);
+
+        g.putCard(sourcePlayerCards.get(0));
+        sourcePlayerCards.remove(sourcePlayerCards.get(0));
+
+        if (sourcePlayerCards.size() == 0) {
+            System.out.println("Удалился атакующий " + sourcePlayer);
+            g.removePlayerMap(sourcePlayer);
+            g.getPlayers().removePlayer(sourcePlayer);
+            if(isEnd) return null;
+            return beforeSource;
+        }
+        putSimilarCards(g, targetPlayer);
+        if(!g.getPlayers().isExist(sourcePlayer)) {
+            return beforeSource;
+        }
+        System.out.println("Карты которые есть у атакующего после атаки " + sourcePlayerCards);
+        return sourcePlayer;
+    }
+
+    private boolean targetPlayerNew(Game g, Player targetPlayer) {
+        List<Card> targetPlayerCard = sortCards(g.getPlayerToCardsMap().get(targetPlayer)); // карты отбиваюищего
+        System.out.println("Карты которые есть у защищищаюегося " + targetPlayerCard);
+        List<Card> cardsToDefine = sortCards(g.getCards()); // карты которые надо отбить
+        List<Card> allCardsToDefine = cardsToDefine;
+        List<Fight> fights = new ArrayList<>();
+        Iterator<Card> targetPlayerCardIterator = targetPlayerCard.iterator();
+        Iterator<Card> cardsToDefineIterator = cardsToDefine.iterator();
+
+        while (cardsToDefineIterator.hasNext()) {
+            Card cardToDefine = cardsToDefineIterator.next();
+
+            boolean isBeat = false;
+            while (targetPlayerCardIterator.hasNext()) {
+                Card playerCard = targetPlayerCardIterator.next();
+
+                if(isBeat(cardToDefine, playerCard)) {
+                    targetPlayerCardIterator.remove(); // отправили карту которую надо побить в бито
+                    isBeat = true;
+                }
+            }
+            if(isBeat) {
+                cardsToDefineIterator.remove(); // отправили карту игрока в бито, если он ее побил
+            }
+        }
+        if (cardsToDefine.size() != 0) {
+            g.getPlayerToCardsMap().get(targetPlayer).addAll(allCardsToDefine); // если не смог отбить хотя бы одну карту забирает все
+            g.clearCardsOnDeck(); // все карты на столе чтобы потянуть игрок забрал и их теперь нет на столе
+            return true;
+        } else {
+            g.removeCardsInPlayer(targetPlayer, allCardsToDefine);
+            if(targetPlayerCard.size() == 0) {
+                System.out.println("Удалился защищающийся " + targetPlayer);
+                g.getPlayers().removePlayer(targetPlayer);
+                g.getPlayerToCardsMap().remove(targetPlayer);
+            }
+            return false;
+        }
+    }
+
+    private boolean targetPlayer(Game g, Player targetPlayer) {
+        List<Card> targetPlayerCard = sortCards(g.getPlayerToCardsMap().get(targetPlayer));
+        List<Card> cardsToDefine = sortCards(g.getCards());
+
+
+        Map<Player, List<Card>> players = g.getPlayerToCardsMap();
+        List<Card> cards = new ArrayList<>(g.getPlayerToCardsMap().get(targetPlayer));
+        System.out.println("Карты которые есть у защищищаюегося " + cards);
+        List<Card> toDelete = new ArrayList<>();
+
+        Iterator<Card> targetPlayerCardIterator = targetPlayerCard.iterator();
+        Iterator<Card> cardIterator = cardsToDefine.iterator();
+
+        List<Fight> fights = new ArrayList<>();
+
+        while (cardIterator.hasNext()) {
+            Card nextCard = cardIterator.next();
+            boolean down = false;
+            while (targetPlayerCardIterator.hasNext()) {
+                Card playerCard = targetPlayerCardIterator.next();
+                if (isBeat(nextCard, playerCard)) {
+                    targetPlayerCardIterator.remove();
+                    cards.remove(playerCard);
+                    toDelete.add(playerCard);
+//                    players.get(targetPlayer).remove(playerCard);
+                    down = true;
+                    fights.add(new Fight(nextCard, playerCard));
+                }
+            }
+            cardIterator.remove();
+
+            if (!down) {
+                targetPlayerCard.addAll(cardsToDefine);
+                fights.add(new Fight(null, null));
+                players.get(targetPlayer).addAll(cardsToDefine); //WRONG
+                g.setPlayerToCardsMap(players);
+                g.setRound(fights);
+                g.clearCardsOnDeck();
+                return true;
+            }
+        }
+        if(cards.size() == 0) {
+            System.out.println("Удалился защищающийся " + targetPlayer);
+            g.getPlayerToCardsMap().remove(targetPlayer);
+            g.removePlayerMap(targetPlayer);
+            g.getPlayers().removePlayer(targetPlayer);
+            g.setRound(fights);
+            g.clearCardsOnDeck();
+            return false;
+        }
+        players.get(targetPlayer).removeAll(toDelete);
+
+        g.setPlayerToCardsMap(players);
+        g.setRound(fights);
+        g.clearCardsOnDeck();
+        return false;
+    }
+
+    private boolean isBeat(Card card, Card playerCard) {
+        return card.getSuit() == playerCard.getSuit()
+                && card.getFace().getRank() < playerCard.getFace().getRank();
+    }
+
+    private void putSimilarCards(Game g, Player target) {
+        if (g.getPlayers().size() == 2) {
+            return;
+        }
+        int count = Math.min(g.getPlayerToCardsMap().get(target).size(), 6);
+
+        List<Card> cards = g.getCards();
+        Map<Player, List<Card>> playerToCardsMap = g.getPlayerToCardsMap();
+
+        List<Card> cardsToDesk = new ArrayList<>(cards);
+
+        for (Map.Entry<Player, List<Card>> entry : playerToCardsMap.entrySet()) {
+            if (target.equals(entry.getKey())) {
+                continue;
+            }
+            List<Card> list = entry.getValue();
+            Iterator<Card> playerCardIterator = list.iterator();
+
+            for (Card card : cards) {
+                while (playerCardIterator.hasNext()) {
+                    Card playerCard = playerCardIterator.next();
+                    if (card.getFace().getRank() == playerCard.getFace().getRank() && count != 0) {
+
+                        cardsToDesk.add(playerCard);
+                        playerCardIterator.remove();
+                        count--;
+                    }
+                }
+            }
+        }
+        Iterator<Map.Entry<Player, List<Card>>> iterator = playerToCardsMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Player, List<Card>> entry = iterator.next();
+            if(entry.getValue().size() == 0) {
+                iterator.remove();
+                g.getPlayers().removePlayer(entry.getKey());
+                System.out.println("Удален игрок " + entry.getKey() + ", когда подкидывал");
+            }
+        }
+        //System.out.println(mapToString(playerToCardsMap) + "ИГРОКИ И КАРТЫ ПОСЛЕ ПОДКИДЫВАНИЯ");
+        g.setPlayerToCardsMap(playerToCardsMap);
+        g.setCards(cardsToDesk);
+    }
+
+
+    public List<Card> sortCards(List<Card> cards) {
+        Collections.sort(cards, Comparator.comparingInt(o -> o.getFace().getRank()));
         return cards;
     }
 
     private boolean isGameAlive(Game g) {
-        return g.getPlayers().size() != 0;
-    }
-
-    private boolean isDeckEmpty(Game g) {
-        return g.getPlayDeck().size() != 0;
+        if(g.getPlayers().size() == 1) System.out.println("Проиграл " + g.getPlayers().get(0));
+        return g.getPlayers().size() != 1;
     }
 
     public void initGameWithPlayers(Game g, int playersCount) {
         CyclicLinkedList<Player> players = new CyclicLinkedList<>();
         if (playersCount > 1 && playersCount <= 7) {
-            for (int i = 0; i < playersCount; i++) {
-                //players.addLast(new Player());
+            for (int i = 1; i <= playersCount; i++) {
+                players.addLast(new Player("Player: " + i + "."));
             }
         }
         g.setPlayers(players);
+        System.out.println(players.toString());
     }
 
     public void initGameWithCards(Game g) {
+        Stack<Card> deck = new Stack<>();
         Stack<Card> playDeck = new Stack<>();
         for (Suit suit : Suit.items) {
             for (Face face : Face.items) {
-                playDeck.push(new Card(suit, face));
+                deck.push(new Card(suit, face));
             }
         }
-        shuffle(playDeck);
+        shuffle(deck);
+        Card trump = deck.remove(35);
+        g.setTrump(trump);
+        playDeck.push(trump);
+        for (Card card : deck) {
+            playDeck.push(card);
+        }
         g.setColoda(playDeck);
+
     }
 
     private void shuffle(Stack<Card> cards) {
@@ -152,7 +335,7 @@ public class GameService {
     }
 
     public void initGameWithPlayersNCards(Game g) throws Exception {
-        HashMap<Player, Stack<Card>> playerCards = new HashMap<>();
+        Map<Player, List<Card>> playerCards = new HashMap<>();
         CyclicLinkedList<Player> players = g.getPlayers();
         Stack<Card> cards = g.getColoda();
 
@@ -161,8 +344,27 @@ public class GameService {
             for (int j = 0; j < 6; j++) {
                 cardsToPlayer.push(cards.pop());
             }
-            //playerCards.put(players.get(i), cardsToPlayer);
+            System.out.println(players.get(i).toString());
+            playerCards.put(players.get(i), cardsToPlayer);
+
         }
+
+        g.setPlayerToCardsMap(playerCards);
+        g.setColoda(cards);
+
     }
 
+    private String mapToString(Map<Player, List<Card>> map) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Player, List<Card>> pair : map.entrySet()) {
+            Player player = pair.getKey();
+            sb.append(player);
+            sb.append(" -> ");
+            for (Card card : pair.getValue()) {
+                sb.append(card).append(", ");
+            }
+        }
+
+        return sb.toString();
+    }
 }

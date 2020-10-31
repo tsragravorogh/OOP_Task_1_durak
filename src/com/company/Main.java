@@ -27,11 +27,22 @@ public class Main {
 //        list.addLast(new Player("2"));
 //        list.addLast(new Player("3"));
 //
-//        for (int i = 0; i < 5; i++) {
-//            System.out.println(list.getNext(listz));
-//        }
+//
+//        System.out.println(list.toString());
+//
+//        Player player = list.get(1);
+//        list.removePlayer(player);
+//
+//
+//        System.out.println(list.toString());
+//
+//        System.out.println(list.findPlayerBeforeByIndex(1));
+//
+//        Player player1 = list.findPlayerBeforeByIndex(1);
+//
+//        System.out.println(list.indexByPlayer(player1));
 
 
-	// write your code here
+        // write your code here
     }
 }

@@ -65,6 +65,10 @@ public class Game {
         this.playerToCardsMap = playerToCardsMap;
     }
 
+    public void removeCardsInPlayer(Player player, List<Card> cards) {
+        this.playerToCardsMap.get(player).removeAll(cards);
+    }
+
     public Card getTrump() {
         return trump;
     }
