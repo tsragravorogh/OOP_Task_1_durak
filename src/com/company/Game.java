@@ -21,6 +21,22 @@ public class Game {
         this.players = players;
     }
 
+    public void removePlayer(Player player) {
+        players.removePlayer(player);
+    }
+
+    public boolean isPlayerExist(Player player) {
+        return players.isExist(player);
+    }
+
+    public Player getNext(Player player) {
+        return players.getNext(player);
+    }
+
+    public Player beforePlayer(Player player) {
+        return players.findPlayerBeforeByIndex(players.indexByPlayer(player));
+    }
+
     public void setCards(List<Card> cards) {
         this.desk = cards;
     }

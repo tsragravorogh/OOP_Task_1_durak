@@ -26,21 +26,12 @@ public class Main {
 //        list.addLast(new Player("1"));
 //        list.addLast(new Player("2"));
 //        list.addLast(new Player("3"));
+//        Player player = list.get(2);
 //
-//
+//        System.out.println(player);
 //        System.out.println(list.toString());
 //
-//        Player player = list.get(1);
-//        list.removePlayer(player);
-//
-//
-//        System.out.println(list.toString());
-//
-//        System.out.println(list.findPlayerBeforeByIndex(1));
-//
-//        Player player1 = list.findPlayerBeforeByIndex(1);
-//
-//        System.out.println(list.indexByPlayer(player1));
+//        System.out.println(list.isExist(player));
 
 
         // write your code here

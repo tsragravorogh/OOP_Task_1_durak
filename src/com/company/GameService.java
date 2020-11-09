@@ -10,7 +10,7 @@ public class GameService {
         initGameWithPlayersNCards(g);
 
         Player source = null;
-        Player target = null;
+        Player target;
         boolean isFirstRound = true;
         boolean isPickedUp = false;
 
@@ -21,8 +21,10 @@ public class GameService {
                 isFirstRound = false;
             } else {
                 source = getSourcePlayer(g, isPickedUp, source); //определили ходящего
+                System.out.println(g.isPlayerExist(source) + " EXIST PLAYER OR NOT");
                 System.out.println(source + " атакует");
                 target = getTargetPlayer(g, source); //определили отбивающего
+                System.out.println(g.isPlayerExist(target) + " EXIST PLAYER OR NOT");
                 System.out.println(target + " защищается");
             }
             //System.out.println(source + ", " + target);
@@ -99,22 +101,23 @@ public class GameService {
         return g.getPlayers().get(count);
     }
 
-    private Player getSourcePlayer(Game g, boolean isPickedUp, Player playerO) {
+    private Player getSourcePlayer(Game g, boolean isPickedUp, Player playerBefore) {
+        System.out.println("когда выбирали source" + g.getPlayers().toString());
         Player player;
         if (!isPickedUp) {
-            player = g.getPlayers().getNext(playerO);
+            player = g.getNext(playerBefore);
         } else {
-            player = g.getPlayers().getNext(g.getPlayers().getNext(playerO));
+            player = g.getNext(g.getNext(playerBefore));
         }
         return player;
     }
 
     private Player getTargetPlayer(Game g, Player sourcePlayer) {
-        return g.getPlayers().getNext(sourcePlayer);
+        return g.getNext(sourcePlayer);
     }
 
     private Player sourcePlayer(Game g, Player sourcePlayer, Player targetPlayer) {
-        Player beforeSource = g.getPlayers().findPlayerBeforeByIndex(g.getPlayers().indexByPlayer(sourcePlayer));
+        Player beforeSource = g.beforePlayer(sourcePlayer);
         boolean isEnd = g.getPlayers().size == 2;
         System.out.println("Игорок которого вернет атакующий если удалится " + beforeSource);
         List<Card> sourcePlayerCards = sortCards(g.getPlayerToCardsMap().get(sourcePlayer));// sort
@@ -126,13 +129,19 @@ public class GameService {
         if (sourcePlayerCards.size() == 0) {
             System.out.println("Удалился атакующий " + sourcePlayer);
             g.removePlayerMap(sourcePlayer);
-            g.getPlayers().removePlayer(sourcePlayer);
+            g.removePlayer(sourcePlayer);
             if(isEnd) return null;
             return beforeSource;
         }
         putSimilarCards(g, targetPlayer);
-        if(!g.getPlayers().isExist(sourcePlayer)) {
+        System.out.println("Игроки подкинули.");
+        if(!g.isPlayerExist(sourcePlayer) && g.isPlayerExist(beforeSource)) { // зацикливается
+            System.out.println("136");
             return beforeSource;
+        }
+
+        else {
+            System.out.println("ВЕРНУЛИ ТОГО КТО СУЩЕСТВУЕТ");
         }
         System.out.println("Карты которые есть у атакующего после атаки " + sourcePlayerCards);
         return sourcePlayer;
@@ -171,7 +180,7 @@ public class GameService {
             g.removeCardsInPlayer(targetPlayer, allCardsToDefine);
             if(targetPlayerCard.size() == 0) {
                 System.out.println("Удалился защищающийся " + targetPlayer);
-                g.getPlayers().removePlayer(targetPlayer);
+                g.removePlayer(targetPlayer);
                 g.getPlayerToCardsMap().remove(targetPlayer);
             }
             return false;
@@ -223,7 +232,7 @@ public class GameService {
             System.out.println("Удалился защищающийся " + targetPlayer);
             g.getPlayerToCardsMap().remove(targetPlayer);
             g.removePlayerMap(targetPlayer);
-            g.getPlayers().removePlayer(targetPlayer);
+            g.removePlayer(targetPlayer);
             g.setRound(fights);
             g.clearCardsOnDeck();
             return false;
@@ -241,10 +250,12 @@ public class GameService {
                 && card.getFace().getRank() < playerCard.getFace().getRank();
     }
 
+
     private void putSimilarCards(Game g, Player target) {
         if (g.getPlayers().size() == 2) {
             return;
         }
+
         int count = Math.min(g.getPlayerToCardsMap().get(target).size(), 6);
 
         List<Card> cards = g.getCards();
@@ -276,7 +287,8 @@ public class GameService {
             Map.Entry<Player, List<Card>> entry = iterator.next();
             if(entry.getValue().size() == 0) {
                 iterator.remove();
-                g.getPlayers().removePlayer(entry.getKey());
+                g.removePlayer(entry.getKey());
+                System.out.println(g.getPlayers().toString() + "ПОСЛЕ УДАЛЕНИЕМ");
                 System.out.println("Удален игрок " + entry.getKey() + ", когда подкидывал");
             }
         }
