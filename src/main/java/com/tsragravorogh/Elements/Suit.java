@@ -1,6 +1,6 @@
-package com.company;
+package com.tsragravorogh.Elements;
 
-enum Suit {
+public enum Suit {
     CLUBS("♣"), DIAMONDS("♦"), HEARTS("♥"), SPADES("♠");
 
     private String value;

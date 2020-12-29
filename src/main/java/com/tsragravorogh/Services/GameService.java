@@ -1,4 +1,14 @@
-package com.company;
+package com.tsragravorogh.Services;
+
+
+import com.tsragravorogh.Elements.Card;
+import com.tsragravorogh.Elements.Face;
+import com.tsragravorogh.Elements.Player;
+import com.tsragravorogh.Elements.Suit;
+import com.tsragravorogh.Filds.Fight;
+import com.tsragravorogh.Filds.Game;
+import com.tsragravorogh.Filds.Round;
+import com.tsragravorogh.Utils.CyclicLinkedList;
 
 import java.util.*;
 
@@ -26,6 +36,8 @@ public class GameService {
                 target = getTargetPlayer(g, source); //определили отбивающего
                 System.out.println(g.isPlayerExist(target) + " EXIST PLAYER OR NOT");
                 System.out.println(target + " защищается");
+
+
             }
             //System.out.println(source + ", " + target);
             Round r = new Round();
@@ -118,7 +130,7 @@ public class GameService {
 
     private Player sourcePlayer(Game g, Player sourcePlayer, Player targetPlayer) {
         Player beforeSource = g.beforePlayer(sourcePlayer);
-        boolean isEnd = g.getPlayers().size == 2;
+        boolean isEnd = g.getPlayers().size() == 2;
         System.out.println("Игорок которого вернет атакующий если удалится " + beforeSource);
         List<Card> sourcePlayerCards = sortCards(g.getPlayerToCardsMap().get(sourcePlayer));// sort
         System.out.println("Карты которые есть у атакующего " + sourcePlayerCards);
@@ -223,7 +235,7 @@ public class GameService {
                 fights.add(new Fight(null, null));
                 players.get(targetPlayer).addAll(cardsToDefine); //WRONG
                 g.setPlayerToCardsMap(players);
-                g.setRound(fights);
+                //g.setRound(fights);
                 g.clearCardsOnDeck();
                 return true;
             }
@@ -233,14 +245,14 @@ public class GameService {
             g.getPlayerToCardsMap().remove(targetPlayer);
             g.removePlayerMap(targetPlayer);
             g.removePlayer(targetPlayer);
-            g.setRound(fights);
+            //g.setRound(fights);
             g.clearCardsOnDeck();
             return false;
         }
         players.get(targetPlayer).removeAll(toDelete);
 
         g.setPlayerToCardsMap(players);
-        g.setRound(fights);
+        //g.setRound(fights);
         g.clearCardsOnDeck();
         return false;
     }
@@ -351,7 +363,7 @@ public class GameService {
         CyclicLinkedList<Player> players = g.getPlayers();
         Stack<Card> cards = g.getColoda();
 
-        for (int i = 0; i < players.size; i++) {
+        for (int i = 0; i < players.size(); i++) {
             Stack<Card> cardsToPlayer = new Stack<>();
             for (int j = 0; j < 6; j++) {
                 cardsToPlayer.push(cards.pop());

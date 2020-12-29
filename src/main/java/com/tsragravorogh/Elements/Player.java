@@ -1,4 +1,4 @@
-package com.company;
+package com.tsragravorogh.Elements;
 
 public class Player {
     String name;

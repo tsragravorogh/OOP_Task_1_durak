@@ -1,4 +1,5 @@
-package com.company;
+package com.tsragravorogh.Elements;
+
 
 public class Card{
     private Suit suit;

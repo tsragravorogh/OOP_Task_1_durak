@@ -1,4 +1,6 @@
-package com.company;
+package com.tsragravorogh.Filds;
+
+import com.tsragravorogh.Elements.Card;
 
 public class Fight {
     private Card down;

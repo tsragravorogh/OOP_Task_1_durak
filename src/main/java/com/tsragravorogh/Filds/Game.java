@@ -1,15 +1,19 @@
-package com.company;
+package com.tsragravorogh.Filds;
+
+import com.tsragravorogh.Elements.Card;
+import com.tsragravorogh.Elements.Player;
+import com.tsragravorogh.Utils.CyclicLinkedList;
 
 import java.util.*;
 
 public class Game {
 
     private Card trump; // козырь
-    private CyclicLinkedList<Player> players; // игроки в игре
+    private CyclicLinkedList<Player> players = new CyclicLinkedList<>(); // игроки в игре
     private List<Card> desk = new ArrayList<>(); // карты в game
     private Map<Player, List<Card>> playerToCardsMap; // игроки
     private Stack<Card> playDeck; // стартовая колода
-    private List<List<Fight>> rounds = new ArrayList<>();
+//    private List<List<Fight>> rounds = new ArrayList<>();
 
 
 
@@ -34,7 +38,7 @@ public class Game {
     }
 
     public Player beforePlayer(Player player) {
-        return players.findPlayerBeforeByIndex(players.indexByPlayer(player));
+        return players.playerBeforePlayer(player);
     }
 
     public void setCards(List<Card> cards) {
@@ -93,11 +97,11 @@ public class Game {
         this.trump = trump;
     }
 
-    public List<List<Fight>> getRounds() {
-        return rounds;
-    }
-
-    public void setRound(List<Fight> round) {
-        rounds.add(round);
-    }
+//    public List<List<Fight>> getRounds() {
+//        return rounds;
+//    }
+//
+//    public void setRound(List<Fight> round) {
+//        rounds.add(round);
+//    }
 }

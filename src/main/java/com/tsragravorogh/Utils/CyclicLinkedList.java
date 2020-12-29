@@ -1,10 +1,10 @@
-package com.company;
+package com.tsragravorogh.Utils;
 
 public class CyclicLinkedList<Player> {
 
     public class ListItem {
         private Player value;
-        private ListItem next;
+        private transient ListItem next;
 
         public ListItem(Player value, ListItem next) {
             this.value = value;
@@ -56,36 +56,61 @@ public class CyclicLinkedList<Player> {
             }
         }
     }
-
     public void removePlayer(Player player) {
-        int count = 0;
         ListItem curr = head;
-        while (!curr.value.equals(player)) {
-            count++;
+        while (curr.next != null) {
+            if (curr.next.value.equals(player)) {
+                if (curr == tail) {
+                    head = head.next;
+                    tail.next = head;
+                    size--;
+                    return;
+                }
+                if (curr.next == tail) {
+                    curr.next = head;
+                    tail = curr;
+                    size--;
+                    return;
+                }
+                curr.next = curr.next.next;
+                size--;
+                return;
+            }
             curr = curr.next;
         }
-        remove(count);
     }
 
-    public boolean remove(int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IllegalArgumentException();
-        }
-        if (index == 0) {
-            head = head.next;
-            tail.next = head;
-        }
-        if (index == size - 1) {
-            ListItem node = findNodeBeforeByIndex(index);
-            node.next = head;
-        } else {
-            ListItem curr = findNodeBeforeByIndex(index);
-            ListItem tmp = findByIndex(index);
-            curr.next = tmp.next;
-        }
-        size--;
-        return false;
-    }
+
+
+//    public void removePlayerc(Player player) {
+//        int count = 0;
+//        ListItem curr = head;
+//        while (!curr.value.equals(player)) {
+//            count++;
+//            curr = curr.next;
+//        }
+//        remove(count);
+//    }
+
+//    public boolean remove(int index) {
+//        if (index < 0 || index > size - 1) {
+//            throw new IllegalArgumentException();
+//        }
+//        if (index == 0) {
+//            head = head.next;
+//            tail.next = head;
+//        }
+//        if (index == size - 1) {
+//            ListItem node = findNodeBeforeByIndex(index);
+//            node.next = head;
+//        } else {
+//            ListItem curr = findNodeBeforeByIndex(index);
+//            ListItem tmp = findByIndex(index);
+//            curr.next = tmp.next;
+//        }
+//        size--;
+//        return false;
+//    }
 
     public int indexByPlayer(Player player) {
         ListItem curr = head;
@@ -95,6 +120,18 @@ public class CyclicLinkedList<Player> {
             count++;
         }
         return count;
+    }
+
+
+    public Player playerBeforePlayer(Player player) {
+        ListItem curr = head;
+        while (curr.next != null) {
+            if(curr.next.value == player) {
+                return curr.value;
+            }
+            curr = curr.next;
+        }
+        return curr.value;
     }
 
     public Player findPlayerBeforeByIndex(int index) {
@@ -125,23 +162,23 @@ public class CyclicLinkedList<Player> {
         return null;
     }
 
-    public ListItem findNodeBeforeByIndex(int index) {
-
-        if (index == 0) {
-            return tail;
-        }
-
-        int count = 0;
-        ListItem curr = head;
-        while (curr.next != null) {
-            if (count == index - 1) {
-                return curr;
-            }
-            count++;
-            curr = curr.next;
-        }
-        return null;
-    }
+//    public ListItem findNodeBeforeByIndex(int index) {
+//
+//        if (index == 0) {
+//            return tail;
+//        }
+//
+//        int count = 0;
+//        ListItem curr = head;
+//        while (curr.next != null) {
+//            if (count == index - 1) {
+//                return curr;
+//            }
+//            count++;
+//            curr = curr.next;
+//        }
+//        return null;
+//    }
 
     private ListItem findByIndex(int index) {
         if (index < 0 || index > size - 1) {
